@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electricity Bill Calculator</title>
+    <style>
+        body {
+            background: linear-gradient(to bottom right, #4CAF50, #2196F3);
+            color: #fff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+        }
+
+        .header {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            margin-top: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .container {
+            background: linear-gradient(to bottom right, #4CAF50, #2196F3);
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 10px 0 15px -5px rgba(0, 0, 0, 0.1); /* Right side shadow */
+            text-align: center;
+            max-width: 300px;
+            margin: auto;
+            overflow: hidden;
+            animation: containerBackgroundAnimation 10s infinite linear;
+            transition: filter 0.3s; /* Add transition for the blur effect */
+        }
+
+        .blur {
+            filter: blur(5px); /* Apply the blur effect */
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            text-align: left;
+            font-size: 14px;
+            transition: transform 0.3s, box-shadow 0.3s, background 0.5s;
+        }
+
+        input {
+            width: calc(100% - 20px);
+            padding: 8px;
+            margin-bottom: 12px;
+            box-sizing: border-box;
+            font-size: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            transition: transform 0.3s, box-shadow 0.3s, background 0.5s;
+        }
+
+        input:hover,
+        input:focus {
+            background: linear-gradient(to right, #4CAF50, #00FF7F);
+            transform: scale(1.1);
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.5); /* Increased shadow on hover */
+        }
+
+        button {
+            background: linear-gradient(to right, #4CAF50, #2196F3); /* Blue to Green gradient */
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3); /* Box-shadow added */
+            transition: transform 0.3s, box-shadow 0.3s, background 0.5s;
+        }
+
+        button:hover {
+            background: linear-gradient(to right, #4CAF50, #00FF7F); /* Blue to Green gradient on hover */
+            transform: scale(1.1);
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.5); /* Increased shadow on hover */
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @keyframes containerBackgroundAnimation {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Widget styles */
+        .widget {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(to bottom right, #2196F3, #4CAF50);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), -10px 0 15px -5px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            max-width: 300px;
+            color: #fff;
+            animation: widgetBackgroundAnimation 10s infinite linear;
+        }
+
+        .widget-header {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .result {
+            margin-bottom: 10px;
+            word-wrap: break-word; /* Added to allow text to wrap within the result widget */
+        }
+
+        .close-widget {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        @keyframes widgetBackgroundAnimation {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">Electricity Bill Calculator</div>
+
+    <div id="input-container" class="container">
+        <label for="ownerName">Owner Name:</label>
+        <input type="text" id="ownerName">
+
+        <label for="houseNumber">House Number:</label>
+        <input type="text" id="houseNumber">
+
+        <label for="unitsUsed">Units Used:</label>
+        <input type="number" id="unitsUsed">
+
+        <label for="pricePerUnit">Price Per Unit:</label>
+        <input type="number" id="pricePerUnit">
+
+        <label for="otherCharges">Other Charges:</label>
+        <input type="number" id="otherCharges">
+
+        <label for="tax">Tax:</label>
+        <input type="number" id="tax">
+
+        <button onclick="calculateBill()">Calculate Bill</button>
+    </div>
+
+    <!-- The widget -->
+    <div id="widget" class="widget">
+        <span class="close-widget" onclick="closeWidget()">&times;</span>
+        <div id="widget-owner" class="result"></div>
+        <div id="widget-house" class="result"></div>
+        <div id="widget-units" class="result"></div>
+        <div id="widget-price" class="result"></div>
+        <div id="widget-other" class="result"></div>
+        <div id="widget-tax" class="result"></div>
+        <div id="widget-total" class="result"></div>
+        <div id="widget-message"></div>
+    </div>
+
+    <script>
+        function calculateBill() {
+            const ownerName = document.getElementById('ownerName').value;
+            const houseNumber = document.getElementById('houseNumber').value;
+            const unitsUsed = parseFloat(document.getElementById('unitsUsed').value);
+            const pricePerUnit = parseFloat(document.getElementById('pricePerUnit').value);
+            const otherCharges = parseFloat(document.getElementById('otherCharges').value) || 0;
+            const tax = parseFloat(document.getElementById('tax').value) || 0;
+
+            const totalBill = (unitsUsed * pricePerUnit) + otherCharges + tax;
+
+            // Set widget content
+            document.getElementById('widget-owner').innerText = `The Name of House owner: ${ownerName}`;
+            document.getElementById('widget-house').innerText = `House no: ${houseNumber}`;
+            document.getElementById('widget-units').innerText = `Total units used: ${unitsUsed}`;
+            document.getElementById('widget-price').innerText = `Price of per unit: ${pricePerUnit}`;
+            document.getElementById('widget-other').innerText = `Other charges: ${otherCharges}`;
+            document.getElementById('widget-tax').innerText = `Tax charges: ${tax}`;
+            document.getElementById('widget-total').innerText = `Total Bill: ${totalBill.toFixed(2)}`;
+            document.getElementById('widget-message').innerText = 'Thanks for using Muhammad Umair Program 😊';
+
+            // Show the widget
+            const widget = document.getElementById('widget');
+            widget.style.display = 'block';
+
+            // Blur the input container
+            const inputContainer = document.getElementById('input-container');
+            inputContainer.classList.add('blur');
+        }
+
+        function closeWidget() {
+            // Hide the widget
+            const widget = document.getElementById('widget');
+            widget.style.display = 'none';
+
+            // Remove blur from the input container
+            const inputContainer = document.getElementById('input-container');
+            inputContainer.classList.remove('blur');
+        }
+    </script>
+</body>
+</html>
